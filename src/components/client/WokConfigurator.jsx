@@ -89,23 +89,22 @@ export default function WokConfigurator({ onAddToCart, onClose }) {
     { id: 5, label: 'Extras', icon: Plus },
     { id: 6, label: 'Bebida', icon: ShoppingBag },
   ]
-
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
       
       {/* Step Indicators */}
       <div style={{ display: 'flex', gap: '8px', marginBottom: '2rem' }}>
-        {steps.map(s => (
-          <div key={s.id} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <div style={{ 
-              height: 4, borderRadius: 2, 
-              background: step >= s.id ? 'var(--color-accent)' : 'rgba(255,255,255,0.1)',
-              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
-            }} />
-            <span style={{ fontSize: '0.6rem', fontWeight: 800, textAlign: 'center', color: step >= s.id ? 'var(--color-accent)' : 'var(--color-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              {s.label}
-            </span>
-          </div>
+        {[1, 2, 3, 4, 5, 6].map((s) => (
+          <div 
+            key={s} 
+            style={{ 
+              flex: 1, 
+              height: '6px', 
+              borderRadius: '10px',
+              background: s <= step ? 'var(--color-accent)' : 'rgba(255,255,255,0.1)',
+              transition: 'all 0.3s'
+            }} 
+          />
         ))}
       </div>
 
