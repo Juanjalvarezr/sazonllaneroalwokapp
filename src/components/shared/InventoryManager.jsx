@@ -106,11 +106,11 @@ export default function InventoryManager() {
       <section style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         <h2 style={{ fontFamily: 'Outfit,sans-serif', fontWeight: 800, fontSize: '1.4rem', margin: '0.5rem 0' }}>Configuración Buffet Wok</h2>
         
-        {['bases', 'proteinas', 'extras'].map(cat => (
+        {['bases', 'proteinas', 'principios', 'ensaladas', 'extras'].map(cat => (
           <div key={cat} className="glass" style={{ borderRadius: '24px', padding: '1.5rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
               <h3 style={{ fontFamily: 'Outfit,sans-serif', fontWeight: 700, margin: 0, textTransform: 'capitalize' }}>
-                {cat === 'proteinas' ? '🥩 Proteínas' : cat === 'bases' ? '🍚 Bases' : '🥗 Extras'}
+                {cat === 'proteinas' ? '🥩 Proteínas' : cat === 'bases' ? '🍚 Bases' : cat === 'principios' ? '🫘 Principios' : cat === 'ensaladas' ? '🥗 Ensaladas' : '🍟 Extras'}
               </h3>
             </div>
 

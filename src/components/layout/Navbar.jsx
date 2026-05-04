@@ -41,75 +41,69 @@ export default function Navbar({ role, setRole }) {
     admin: Settings
   }
 
+  const isCliente = role === 'cliente'
+
   return (
     <>
       <nav style={{
-        position: 'sticky', top: 0, zIndex: 40,
-        backdropFilter: 'blur(20px)',
-        background: 'rgba(2,6,23,0.85)',
-        borderBottom: '1px solid rgba(255,255,255,0.07)',
-        padding: '0.85rem 1.5rem',
+        position: 'sticky', top: 0, zIndex: 100,
+        backdropFilter: isCliente ? 'none' : 'blur(20px)',
+        background: isCliente ? 'transparent' : 'rgba(2,6,23,0.85)',
+        borderBottom: isCliente ? 'none' : '1px solid rgba(255,255,255,0.07)',
+        padding: isCliente ? '1rem 1.5rem 0' : '0.85rem 1.5rem',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         gap: '1rem', flexWrap: 'wrap'
       }}>
-        {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        {/* Logo (Minimal on client, Full on staff) */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', opacity: isCliente ? 0 : 1 }}>
           <img 
             src="/Sazon%20llanero%20logo.png" 
             alt="Logo" 
             style={{ 
-              height: '42px', 
-              width: '42px', 
-              borderRadius: '12px', 
-              objectFit: 'cover',
-              border: '2px solid rgba(234,88,12,0.5)',
-              boxShadow: '0 0 15px rgba(234,88,12,0.3)'
+              height: '32px', 
+              width: '32px', 
+              borderRadius: '8px', 
+              objectFit: 'cover'
             }} 
           />
-          <div>
-            <span style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 900, fontSize: '1.2rem', color: 'white', letterSpacing: '0.02em', display: 'block', lineHeight: 1 }}>
-              SAZÓN LLANERO
-            </span>
-            <span style={{ fontSize: '0.65rem', color: 'var(--color-accent)', fontWeight: 800, letterSpacing: '0.15em' }}>
-              AL WOK
-            </span>
-          </div>
+          <span style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 900, fontSize: '1rem', color: 'white' }}>
+            SAZÓN LLANERO
+          </span>
         </div>
 
-        {/* Role tabs */}
-        <div style={{ display: 'flex', gap: '0.4rem', background: 'rgba(255,255,255,0.04)', borderRadius: '40px', padding: '4px', border: '1px solid rgba(255,255,255,0.08)' }}>
+        {/* Role tabs (Discreet for staff access) */}
+        <div style={{ 
+          display: 'flex', gap: '0.3rem', 
+          background: isCliente ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.04)', 
+          borderRadius: '40px', padding: '4px', 
+          border: isCliente ? 'none' : '1px solid rgba(255,255,255,0.08)',
+          marginLeft: 'auto'
+        }}>
           {[
-            { key: 'cliente', label: 'Cliente', icon: User },
+            { key: 'cliente', label: 'Inicio', icon: User },
             { key: 'cajero', label: 'Caja', icon: ShoppingCart },
-            { key: 'cocina', label: 'Cocina', icon: Utensils },
             { key: 'admin', label: 'Admin', icon: Settings },
           ].map(({ key, label, icon: Icon }) => (
             <button key={key} onClick={() => handleRoleChange(key)} style={{
-              padding: '0.45rem 1rem',
+              padding: isCliente ? '0.5rem' : '0.45rem 0.8rem',
               borderRadius: '36px',
               border: 'none',
               cursor: 'pointer',
               fontWeight: 600,
-              fontSize: '0.78rem',
-              display: 'flex', alignItems: 'center', gap: '0.4rem',
+              fontSize: '0.72rem',
+              display: 'flex', alignItems: 'center', gap: '0.3rem',
               transition: 'all 0.2s',
               background: role === key ? 'linear-gradient(135deg,#ea580c,#c2410c)' : 'transparent',
-              color: role === key ? 'white' : 'var(--color-muted)',
-              boxShadow: role === key ? '0 0 16px rgba(234,88,12,0.3)' : 'none',
+              color: role === key ? 'white' : 'rgba(255,255,255,0.3)',
+              boxShadow: role === key ? '0 0 12px rgba(234,88,12,0.2)' : 'none',
             }}>
               <Icon size={14} />
-              {label}
+              {!isCliente && label}
             </button>
           ))}
         </div>
 
         {/* Right: role indicator */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{
-            padding: '0.4rem 1rem', borderRadius: '40px',
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            fontSize: '0.75rem', fontWeight: 600,
             color: 'white',
             display: 'flex', alignItems: 'center', gap: '0.4rem',
           }}>

@@ -67,53 +67,167 @@ export default function WokConfigurator({ onAdd, onClose }) {
 
     setTimeout(() => {
       onAdd({
-        cartId: `wok-buffet-${Date.now()}`,
-        tipo: 'wok',
-        nombre: `Wok Buffet (${selectedBase.nombre}${proteinSummary ? ' + ' + proteinSummary : ''})`,
-        detalles: `${proteinSummary} ${extrasSummary ? ' | ' + extrasSummary : ''}`,
-        subtotal,
-        emoji: '🍜',
-        proteinaId: selectedProteins[0]?.id || null, // For stock deduction (primary)
-        extrasIds: selectedExtras,
-        cantidad: 1, // 1 entire wok
-      })
-    }, 400)
   }
 
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem', maxHeight: '75vh', overflowY: 'auto', paddingRight: '0.5rem', scrollbarWidth: 'thin' }}>
-      
-      {/* 1. Seleccionar Base */}
-      <section>
-        <label style={{ fontSize: '0.75rem', color: 'var(--color-muted)', fontWeight: 600, display: 'block', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-          1. Elige la base
-        </label>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.75rem' }}>
-          {wokConfig.bases.filter(b => b.activo).map(b => (
-            <button key={b.id} onClick={() => setSelectedBase(b)} style={{
-              padding: '0.85rem', borderRadius: '16px', border: '2px solid',
-              borderColor: selectedBase.id === b.id ? 'var(--color-accent)' : 'rgba(255,255,255,0.08)',
-              background: selectedBase.id === b.id ? 'rgba(234,88,12,0.1)' : 'rgba(255,255,255,0.03)',
-              color: selectedBase.id === b.id ? 'var(--color-accent-light)' : 'var(--color-muted)',
-              fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.9rem',
-              display: 'flex', alignItems: 'center', gap: '0.6rem', justifyContent: 'center'
-            }}>
-              <span style={{ fontSize: '1.2rem' }}>{b.emoji}</span> {b.nombre}
-            </button>
-          ))}
-        </div>
-      </section>
+  const handleFinish = () => {
+    if (!selectedBase || !selectedProteina) return
+    
+    const details = [
+      selectedBase.nombre,
+      selectedProteina.nombre,
+      selectedPrincipio ? `con ${selectedPrincipio.nombre}` : null,
+      selectedEnsalada ? `y ${selectedEnsalada.nombre}` : null,
+      selectedExtras.length > 0 ? `+ Extras: ${selectedExtras.map(e => e.nombre).join(', ')}` : null
+    ].filter(Boolean).join(' | ')
 
-      {/* 2. Seleccionar Proteínas (Buffet style) */}
-      <section>
-        <label style={{ fontSize: '0.75rem', color: 'var(--color-muted)', fontWeight: 600, display: 'block', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-          2. Añadir Proteínas (porciones)
-        </label>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-          {wokConfig.proteinas.filter(p => p.activo).map(p => {
-            const selected = selectedProteins.find(sp => sp.id === p.id)
-            const qty = selected?.quantity || 0
-            return (
+    onAddToCart({
+      cartId: `wok-${Date.now()}`,
+      itemId: 'wok-custom',
+      tipo: 'wok',
+      nombre: 'Arma tu Wok',
+      detalles: details,
+      proteinaId: selectedProteina.id,
+      extrasIds: selectedExtras.map(e => e.id),
+      subtotal: calculateSubtotal(),
+      cantidad,
+      emoji: '🍜'
+    })
+  }
+
+  const toggleExtra = (extra) => {
+    if (selectedExtras.find(e => e.id === extra.id)) {
+      setSelectedExtras(selectedExtras.filter(e => e.id !== extra.id))
+    } else {
+      setSelectedExtras([...selectedExtras, extra])
+    }
+  }
+
+  const StepIndicator = () => (
+    <div style={{ display: 'flex', gap: '4px', marginBottom: '2rem' }}>
+      {[1,2,3,4,5].map(s => (
+        <div key={s} style={{ 
+          flex: 1, height: 4, borderRadius: 2,
+          background: step >= s ? 'var(--color-accent)' : 'rgba(255,255,255,0.1)',
+          transition: 'all 0.3s'
+        }} />
+      ))}
+    </div>
+  )
+
+  return (
+    <div className="glass animate-fade-in" style={{ borderRadius: '28px', padding: '1.5rem', border: '1px solid rgba(255,255,255,0.08)' }}>
+      <StepIndicator />
+
+      {step === 1 && (
+        <section className="animate-slide-up">
+          <h3 style={{ fontFamily: 'Outfit', fontWeight: 800, margin: '0 0 1rem' }}>1. Selecciona tu base</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            {wokConfig.bases.filter(b => b.activo).map(b => (
+              <button key={b.id} onClick={() => { setSelectedBase(b); setStep(2); }} style={{
+                padding: '1.5rem', borderRadius: '20px', border: '2px solid',
+                borderColor: selectedBase?.id === b.id ? 'var(--color-accent)' : 'rgba(255,255,255,0.05)',
+                background: selectedBase?.id === b.id ? 'rgba(234,88,12,0.1)' : 'rgba(255,255,255,0.02)',
+                cursor: 'pointer', transition: 'all 0.2s', textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>{b.emoji}</div>
+                <div style={{ fontWeight: 800, color: selectedBase?.id === b.id ? 'white' : 'var(--color-muted)' }}>{b.nombre}</div>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {step === 2 && (
+        <section className="animate-slide-up">
+          <h3 style={{ fontFamily: 'Outfit', fontWeight: 800, margin: '0 0 1rem' }}>2. Elige la proteína</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '0.75rem' }}>
+            {wokConfig.proteinas.filter(p => p.activo && p.stock > 0).map(p => (
+              <button key={p.id} onClick={() => { setSelectedProteina(p); setStep(3); }} style={{
+                padding: '1rem', borderRadius: '18px', border: '2px solid',
+                borderColor: selectedProteina?.id === p.id ? 'var(--color-accent)' : 'rgba(255,255,255,0.05)',
+                background: selectedProteina?.id === p.id ? 'rgba(234,88,12,0.1)' : 'rgba(255,255,255,0.02)',
+                cursor: 'pointer', transition: 'all 0.2s'
+              }}>
+                <div style={{ fontSize: '1.5rem', marginBottom: '4px' }}>{p.emoji}</div>
+                <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '2px' }}>{p.nombre}</div>
+                <div style={{ color: 'var(--color-accent)', fontWeight: 800, fontSize: '0.8rem' }}>+{formatCOP(p.precioPorcion)}</div>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {step === 3 && (
+        <section className="animate-slide-up">
+          <h3 style={{ fontFamily: 'Outfit', fontWeight: 800, margin: '0 0 1rem' }}>3. ¿Algún principio?</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '0.75rem' }}>
+            {wokConfig.principios.map(p => (
+              <button key={p.id} onClick={() => { setSelectedPrincipio(p); setStep(4); }} style={{
+                padding: '1rem', borderRadius: '18px', border: '2px solid',
+                borderColor: selectedPrincipio?.id === p.id ? 'var(--color-oriental)' : 'rgba(255,255,255,0.05)',
+                background: selectedPrincipio?.id === p.id ? 'rgba(79,70,229,0.1)' : 'rgba(255,255,255,0.02)',
+                cursor: 'pointer'
+              }}>
+                <div style={{ fontSize: '1.5rem', marginBottom: '4px' }}>{p.emoji}</div>
+                <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{p.nombre}</div>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {step === 4 && (
+        <section className="animate-slide-up">
+          <h3 style={{ fontFamily: 'Outfit', fontWeight: 800, margin: '0 0 1rem' }}>4. Elige tu ensalada</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '0.75rem' }}>
+            {wokConfig.ensaladas.map(e => (
+              <button key={e.id} onClick={() => { setSelectedEnsalada(e); setStep(5); }} style={{
+                padding: '1rem', borderRadius: '18px', border: '2px solid',
+                borderColor: selectedEnsalada?.id === e.id ? 'var(--color-success)' : 'rgba(255,255,255,0.05)',
+                background: selectedEnsalada?.id === e.id ? 'rgba(34,197,94,0.1)' : 'rgba(255,255,255,0.02)',
+                cursor: 'pointer'
+              }}>
+                <div style={{ fontSize: '1.5rem', marginBottom: '4px' }}>{e.emoji}</div>
+                <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{e.nombre}</div>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {step === 5 && (
+        <section className="animate-slide-up">
+          <h3 style={{ fontFamily: 'Outfit', fontWeight: 800, margin: '0 0 1rem' }}>5. ¿Deseas algún extra? (Opcional)</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '0.75rem', marginBottom: '1.5rem' }}>
+            {wokConfig.extras.filter(ex => ex.activo && ex.stock > 0).map(ex => {
+              const isSelected = selectedExtras.find(e => e.id === ex.id)
+              return (
+                <button key={ex.id} onClick={() => toggleExtra(ex)} style={{
+                  padding: '1rem', borderRadius: '18px', border: '2px solid',
+                  borderColor: isSelected ? 'var(--color-accent)' : 'rgba(255,255,255,0.05)',
+                  background: isSelected ? 'rgba(234,88,12,0.1)' : 'rgba(255,255,255,0.02)',
+                  cursor: 'pointer', transition: 'all 0.2s', textAlign: 'left'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '1.2rem' }}>{ex.emoji}</span>
+                    {isSelected && <Check size={14} color="var(--color-accent)" />}
+                  </div>
+                  <div style={{ fontWeight: 700, fontSize: '0.85rem', marginTop: '4px' }}>{ex.nombre}</div>
+                  <div style={{ color: 'var(--color-accent)', fontWeight: 800, fontSize: '0.8rem' }}>+{formatCOP(ex.precio)}</div>
+                </button>
+              )
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* Footer Navigation */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          {step > 1 && (
+            <button onClick={() => setStep(step - 1)} className="btn-secondary" style={{ padding: '0.6rem 1rem' }}>
+              Atrás
+            </button>
               <div key={p.id} style={{ 
                 display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem 1rem', 
                 borderRadius: '16px', background: qty > 0 ? 'rgba(79,70,229,0.08)' : 'rgba(255,255,255,0.03)', 

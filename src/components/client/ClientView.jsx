@@ -15,7 +15,6 @@ export default function ClientView({ isStaffMode = false }) {
 
   const handleAddToCart = (item) => {
     dispatch({ type: 'ADD_TO_CART', payload: item })
-    // Open cart automatically on first item to guide user
     if (cart.length === 0) setCartOpen(true)
   }
 

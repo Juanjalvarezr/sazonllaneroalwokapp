@@ -27,6 +27,16 @@ export const initialData = {
       { id: 'ext-3', nombre: 'Huevo frito', emoji: '🍳', precio: 2000, stock: 60, activo: true },
       { id: 'ext-4', nombre: 'Chorizo', emoji: '🌭', precio: 4500, stock: 20, activo: true },
       { id: 'ext-5', nombre: 'Verduras Extra', emoji: '🥦', precio: 2000, stock: 30, activo: true },
+    ],
+    principios: [
+      { id: 'pri-1', nombre: 'Frijoles', emoji: '🫘', activo: true },
+      { id: 'pri-2', nombre: 'Lentejas', emoji: '🥣', activo: true },
+      { id: 'pri-3', nombre: 'Pasta Corta', emoji: '🍝', activo: true },
+    ],
+    ensaladas: [
+      { id: 'ens-1', nombre: 'Ensalada Verde', emoji: '🥗', activo: true },
+      { id: 'ens-2', nombre: 'Ensalada Rusa', emoji: '🥔', activo: true },
+      { id: 'ens-3', nombre: 'Sin Ensalada', emoji: '🚫', activo: true },
     ]
   },
 
