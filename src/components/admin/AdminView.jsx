@@ -11,7 +11,7 @@ import InventoryManager from '../shared/InventoryManager'
 
 export default function AdminView() {
   const { state, dispatch } = useStore()
-  const { analytics, woks, bebidas, almuerzoEjecutivo, orders, gastos, pins } = state
+  const { analytics, wokConfig, bebidas, almuerzoEjecutivo, orders, gastos, pins } = state
   const [activeTab, setActiveTab] = useState('dashboard')
 
   const tabs = [
@@ -49,7 +49,7 @@ export default function AdminView() {
         ))}
       </div>
 
-      {activeTab === 'dashboard' && <Dashboard analytics={analytics} orders={orders} woks={woks} bebidas={bebidas} almuerzo={almuerzoEjecutivo} />}
+      {activeTab === 'dashboard' && <Dashboard analytics={analytics} orders={orders} wokConfig={wokConfig} bebidas={bebidas} almuerzo={almuerzoEjecutivo} />}
       {activeTab === 'inventario' && <InventoryManager />}
       {activeTab === 'gastos' && <GastosManager gastos={gastos} analytics={analytics} />}
       {activeTab === 'ajustes' && <AjustesManager pins={pins} />}
@@ -58,7 +58,7 @@ export default function AdminView() {
 }
 
 // ─── Dashboard ─────────────────────────────────────────────────────────────
-function Dashboard({ analytics, orders, woks, bebidas, almuerzo }) {
+function Dashboard({ analytics, orders, wokConfig, bebidas, almuerzo }) {
   const { ventasTotales, cantidadPedidos, ticketPromedio } = analytics
   
   // Calculate payments summary
@@ -70,9 +70,11 @@ function Dashboard({ analytics, orders, woks, bebidas, almuerzo }) {
 
   const recentOrders = orders.slice(0, 10)
 
-  // Low stock items for replenishment
+  // Low stock items for replenishment (Bases, Proteins, Extras)
   const lowStock = [
-    ...woks.filter(w => w.activo && w.stock < 10),
+    ...wokConfig.bases.filter(b => b.activo && b.stock < 10),
+    ...wokConfig.proteinas.filter(p => p.activo && p.stock < 10),
+    ...wokConfig.extras.filter(e => e.activo && e.stock < 10),
     ...bebidas.filter(b => b.activo && b.stock < 10),
     ...(almuerzo.activo && almuerzo.stock < 10 ? [almuerzo] : [])
   ].sort((a, b) => a.stock - b.stock)

@@ -17,6 +17,7 @@ export default function Navbar({ role, setRole }) {
 
   const handlePin = (pin) => {
     // Kitchen uses same PIN as cashier for simplicity, or admin can enter
+    if (!state?.pins) return false
     const expected = (targetRole === 'cajero' || targetRole === 'cocina') ? state.pins.cajero : state.pins.admin
     if (pin === expected) {
       setRole(targetRole)

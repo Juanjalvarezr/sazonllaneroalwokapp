@@ -14,12 +14,14 @@ const STATUS_CONFIG = {
 
 export default function CashierView() {
   const { state, dispatch } = useStore()
-  const { orders, woks, bebidas, almuerzoEjecutivo } = state
+  const { orders, wokConfig, bebidas, almuerzoEjecutivo } = state
   const [activeTab, setActiveTab] = useState('pedidos') // pedidos, pos, inventario
 
-  const criticalWoks    = woks.filter(w => w.activo && w.stock > 0 && w.stock < 5)
-  const criticalBebidas = bebidas.filter(b => b.activo && b.stock > 0 && b.stock < 5)
-  const almCritical     = almuerzoEjecutivo.activo && almuerzoEjecutivo.stock < 5 && almuerzoEjecutivo.stock > 0
+  const criticalBases    = wokConfig.bases.filter(b => b.activo && b.stock < 10)
+  const criticalProteins = wokConfig.proteinas.filter(p => p.activo && p.stock < 10)
+  const criticalExtras   = wokConfig.extras.filter(e => e.activo && e.stock < 10)
+  const criticalBebidas  = bebidas.filter(b => b.activo && b.stock < 5)
+  const almCritical      = almuerzoEjecutivo.activo && almuerzoEjecutivo.stock < 5
 
   const activeOrders = orders.filter(o => o.status !== 'entregado')
   const deliveredToday = orders.filter(o => o.status === 'entregado')
@@ -83,21 +85,16 @@ export default function CashierView() {
       {activeTab === 'pedidos' && (
         <div className="animate-fade-in">
           {/* Stock alerts */}
-          {(criticalWoks.length > 0 || criticalBebidas.length > 0 || almCritical) && (
+          {(criticalProteins.length > 0 || criticalBebidas.length > 0 || almCritical) && (
             <div className="animate-slide-up" style={{ marginBottom: '1.5rem', background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.25)', borderRadius: '20px', padding: '1rem 1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.6rem', color: '#facc15', fontWeight: 700 }}>
-                <AlertTriangle size={16} /> Stock Crítico (menos de 5 unidades)
+                <AlertTriangle size={16} /> Stock Crítico (Reponer pronto)
               </div>
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                {almCritical && (
-                  <span className="badge-yellow">🍽️ Almuerzo: {almuerzoEjecutivo.stock} uds</span>
-                )}
-                {criticalWoks.map(w => (
-                  <span key={w.id} className="badge-yellow">{w.emoji} {w.nombre}: {w.stock} uds</span>
-                ))}
-                {criticalBebidas.map(b => (
-                  <span key={b.id} className="badge-yellow">{b.emoji} {b.nombre}: {b.stock} uds</span>
-                ))}
+                {almCritical && <span className="badge-yellow">🍽️ Almuerzo: {almuerzoEjecutivo.stock}</span>}
+                {criticalProteins.map(p => <span key={p.id} className="badge-yellow">{p.emoji} {p.nombre}: {p.stock}</span>)}
+                {criticalExtras.map(e => <span key={e.id} className="badge-yellow">{e.emoji} {e.nombre}: {e.stock}</span>)}
+                {criticalBebidas.map(b => <span key={b.id} className="badge-yellow">{b.emoji} {b.nombre}: {b.stock}</span>)}
               </div>
             </div>
           )}
