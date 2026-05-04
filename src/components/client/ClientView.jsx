@@ -46,7 +46,7 @@ export default function ClientView({ isStaffMode = false }) {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', marginBottom: '8px' }}>
                <img 
-                src="/logo.png" 
+                src="/Sazon%20llanero%20logo.png" 
                 alt="Logo" 
                 style={{ 
                   height: '80px', 

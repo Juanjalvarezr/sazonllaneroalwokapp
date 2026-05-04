@@ -54,7 +54,7 @@ export default function Navbar({ role, setRole }) {
         {/* Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <img 
-            src="/logo.png" 
+            src="/Sazon%20llanero%20logo.png" 
             alt="Logo" 
             style={{ 
               height: '42px', 
