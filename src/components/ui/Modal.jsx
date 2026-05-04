@@ -19,29 +19,39 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in"
+      className="fixed inset-0 z-[1000] flex items-center justify-center p-4 animate-fade-in"
       style={{ background: 'rgba(2,6,23,0.85)', backdropFilter: 'blur(8px)' }}
       onClick={onClose}
     >
       <div
         className={`w-full ${sizes[size]} animate-zoom-in glass card relative`}
-        style={{ borderRadius: '32px', maxHeight: '90vh', overflowY: 'auto' }}
+        style={{ 
+          borderRadius: '28px', 
+          maxHeight: '92vh', 
+          display: 'flex', 
+          flexDirection: 'column',
+          padding: '1.25rem' 
+        }}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.3rem', fontWeight: 700, color: 'var(--color-text)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexShrink: 0 }}>
+          <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.2rem', fontWeight: 700, color: 'var(--color-text)', margin: 0 }}>
             {title}
           </h2>
           <button
             onClick={onClose}
             className="btn-secondary"
-            style={{ padding: '0.4rem 0.4rem', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{ padding: '0', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
           >
             <X size={16} />
           </button>
         </div>
-        {children}
+
+        {/* Scrollable Content Container */}
+        <div style={{ flex: 1, overflowY: 'auto', paddingRight: '4px', WebkitOverflowScrolling: 'touch' }}>
+          {children}
+        </div>
       </div>
     </div>
   )

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useStore } from '../../store/StoreContext'
 import { formatCOP } from '../../utils/formatters'
-import { ShoppingCart, UtensilsCrossed, Flame, Beer, MapPin } from 'lucide-react'
+import { ShoppingCart, UtensilsCrossed, Flame, Beer, MapPin, PlusCircle, X } from 'lucide-react'
 import MenuRapido from './MenuRapido'
 import MenuWoks from './MenuWoks'
 import Cart from './Cart'
@@ -45,7 +45,7 @@ export default function ClientView({ isStaffMode = false }) {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', marginBottom: '8px' }}>
                <img 
-                src="/Sazon%20llanero%20logo.png" 
+                src="/logo-sazon.png" 
                 alt="Logo" 
                 style={{ 
                   height: '80px', 
@@ -140,7 +140,7 @@ export default function ClientView({ isStaffMode = false }) {
 
       {/* Right Cart Panel (Floating sticky) */}
       {cartOpen && (
-        <div className="glass cart-panel animate-slide-up" style={{ borderRadius: '32px', padding: '1.5rem', position: 'sticky', top: '100px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
+        <div className="glass cart-panel animate-slide-up" style={{ borderRadius: '32px', padding: '1.5rem', position: 'sticky', top: '100px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.5)', maxHeight: 'calc(100vh - 120px)', overflowY: 'auto' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
             <h2 style={{ fontFamily: 'Outfit,sans-serif', fontWeight: 800, fontSize: '1.2rem', margin: 0, display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
               <ShoppingCart size={20} color="var(--color-accent)" />
@@ -164,5 +164,3 @@ export default function ClientView({ isStaffMode = false }) {
   )
 }
 
-// Inline helper for bebidas section
-import { PlusCircle, X } from 'lucide-react'

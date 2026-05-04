@@ -1,4 +1,3 @@
-// ─── Datos semilla del restaurante ────────────────────────────────────────
 export const initialData = {
   // ── Almuerzo Ejecutivo ──
   almuerzoEjecutivo: {
@@ -12,42 +11,37 @@ export const initialData = {
   // ── Configuración Wok Gourmet (Tipo Buffet) ──
   wokConfig: {
     bases: [
-      { id: 'base-1', nombre: 'Arroz Wok', emoji: '🍚', precioBase: 5000, activo: true },
-      { id: 'base-2', nombre: 'Tallarines', emoji: '🍜', precioBase: 6000, activo: true },
+      { id: 'base-1', nombre: 'Arroz Blanco', emoji: '🍚', precioBase: 0, activo: true },
+      { id: 'base-2', nombre: 'Arroz Wok (Negrito)', emoji: '🍱', precioBase: 2000, activo: true },
+      { id: 'base-3', nombre: 'Fideos', emoji: '🍜', precioBase: 1000, activo: true },
     ],
     proteinas: [
-      { id: 'prot-1', nombre: 'Pollo', emoji: '🍗', precioPorcion: 6000, stock: 40, activo: true },
-      { id: 'prot-2', nombre: 'Cerdo', emoji: '🐷', precioPorcion: 7000, stock: 30, activo: true },
-      { id: 'prot-3', nombre: 'Res', emoji: '🥩', precioPorcion: 8000, stock: 25, activo: true },
-      { id: 'prot-4', nombre: 'Camarón', emoji: '🍤', precioPorcion: 12000, stock: 15, activo: true },
+      { id: 'prot-1', nombre: 'Res al Wok', emoji: '🥩', precioPorcion: 8000, stock: 40, activo: true, salsas: ['Natural', 'BBQ', 'Champiñones'] },
+      { id: 'prot-2', nombre: 'Cerdo al Wok', emoji: '🐷', precioPorcion: 7000, stock: 30, activo: true, salsas: ['Natural', 'BBQ', 'Champiñones'] },
+      { id: 'prot-3', nombre: 'Pollo a la Plancha', emoji: '🍗', precioPorcion: 6000, stock: 50, activo: true, salsas: ['Natural', 'BBQ', 'Champiñones'] },
     ],
     extras: [
       { id: 'ext-1', nombre: 'Plátano Maduro', emoji: '🍌', precio: 2500, stock: 50, activo: true },
-      { id: 'ext-2', nombre: 'Patacona', emoji: '🍘', precio: 3000, stock: 40, activo: true },
+      { id: 'ext-2', nombre: 'Pataconas', emoji: '🍘', precio: 3000, stock: 40, activo: true },
       { id: 'ext-3', nombre: 'Huevo frito', emoji: '🍳', precio: 2000, stock: 60, activo: true },
-      { id: 'ext-4', nombre: 'Chorizo', emoji: '🌭', precio: 4500, stock: 20, activo: true },
-      { id: 'ext-5', nombre: 'Verduras Extra', emoji: '🥦', precio: 2000, stock: 30, activo: true },
+      { id: 'ext-4', nombre: 'Salchicha', emoji: '🌭', precio: 2500, stock: 40, activo: true },
+      { id: 'ext-5', nombre: 'Aborrajado (Queso)', emoji: '🧀', precio: 4500, stock: 20, activo: true },
     ],
     principios: [
       { id: 'pri-1', nombre: 'Frijoles', emoji: '🫘', activo: true },
       { id: 'pri-2', nombre: 'Lentejas', emoji: '🥣', activo: true },
-      { id: 'pri-3', nombre: 'Pasta Corta', emoji: '🍝', activo: true },
     ],
     ensaladas: [
       { id: 'ens-1', nombre: 'Ensalada Verde', emoji: '🥗', activo: true },
-      { id: 'ens-2', nombre: 'Ensalada Rusa', emoji: '🥔', activo: true },
+      { id: 'ens-2', nombre: 'Ensalada Roja', emoji: '🍅', activo: true },
       { id: 'ens-3', nombre: 'Sin Ensalada', emoji: '🚫', activo: true },
     ]
   },
 
   // ── Bebidas ──
   bebidas: [
-    { id: 'b1', nombre: 'Limonada Natural',   emoji: '🍋', precio: 5000,  stock: 30, activo: true  },
-    { id: 'b2', nombre: 'Jugo de Maracuyá',   emoji: '🥭', precio: 5500,  stock: 20, activo: true  },
-    { id: 'b3', nombre: 'Agua Mineral',        emoji: '💧', precio: 3000,  stock: 40, activo: true  },
-    { id: 'b4', nombre: 'Gaseosa Personal',   emoji: '🥤', precio: 3500,  stock: 35, activo: true  },
-    { id: 'b5', nombre: 'Té Frío Durazno',    emoji: '🍑', precio: 4500,  stock: 15, activo: true  },
-    { id: 'b6', nombre: 'Jugo de Lulo',       emoji: '🟠', precio: 5000,  stock: 18, activo: true  },
+    { id: 'b1', nombre: 'Jugo Natural', emoji: '🥤', precio: 5000, stock: 30, activo: true },
+    { id: 'b2', nombre: 'Gaseosa', emoji: '🥤', precio: 4000, stock: 40, activo: true },
   ],
 
   orders: [],
@@ -55,8 +49,8 @@ export const initialData = {
   pins: { cajero: '1234', admin: '9999' },
   gastos: [],
   config: {
-    ubicacion: 'Calle Principal - Frente al Parque',
-    estado: 'Abierto', // Abierto, Cerrado, Agotado
+    ubicacion: 'Calle Principal - Sazón Llanero al Wok',
+    estado: 'Abierto', 
   },
   analytics: { 
     ventasTotales: 0, 

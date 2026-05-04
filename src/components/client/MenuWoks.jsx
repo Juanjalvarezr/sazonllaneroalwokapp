@@ -86,7 +86,7 @@ export default function MenuWoks({ onAddToCart }) {
 
       <Modal isOpen={open} onClose={() => setOpen(false)} title="🔥 Configura tu Wok" size="md">
         <WokConfigurator 
-          onAdd={(item) => { onAddToCart(item); setOpen(false) }} 
+          onAddToCart={(item) => { onAddToCart(item); setOpen(false) }} 
           onClose={() => setOpen(false)} 
         />
       </Modal>

@@ -55,9 +55,9 @@ export default function Navbar({ role, setRole }) {
         gap: '1rem', flexWrap: 'wrap'
       }}>
         {/* Logo (Minimal on client, Full on staff) */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', opacity: isCliente ? 0 : 1 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', opacity: 1 }}>
           <img 
-            src="/Sazon%20llanero%20logo.png" 
+            src="/logo-sazon.png" 
             alt="Logo" 
             style={{ 
               height: '32px', 
@@ -103,19 +103,25 @@ export default function Navbar({ role, setRole }) {
           ))}
         </div>
 
-        {/* Right: role indicator */}
-            color: 'white',
-            display: 'flex', alignItems: 'center', gap: '0.4rem',
-          }}>
-            <ChefHat size={13} />
-            {roleLabels[role]}
-          </div>
-          {role !== 'cliente' && (
+        {/* Right: role indicator (Only show if not cliente) */}
+        {!isCliente && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div style={{
+              padding: '0.4rem 1rem', borderRadius: '40px',
+              background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              fontSize: '0.75rem', fontWeight: 600,
+              color: 'white',
+              display: 'flex', alignItems: 'center', gap: '0.4rem',
+            }}>
+              <ChefHat size={13} />
+              {roleLabels[role]}
+            </div>
             <button className="btn-danger" style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem' }} onClick={() => setRole('cliente')}>
-              <LogOut size={13} /> Salir
+              <LogOut size={13} />
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </nav>
 
       {/* PIN Modal */}

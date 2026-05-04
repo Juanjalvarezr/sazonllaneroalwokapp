@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useStore } from '../../store/StoreContext'
 import { formatCOP, formatDate, formatTimeAgo } from '../../utils/formatters'
 import { StockBadge } from '../ui/StockBadge'
-import { Clock, ChefHat, CheckCircle, Package, AlertTriangle, User, CreditCard, FileText, ShoppingCart, LayoutDashboard, PlusCircle, ClipboardList } from 'lucide-react'
+import { Clock, ChefHat, CheckCircle, Package, AlertTriangle, User, CreditCard, FileText, ShoppingCart, LayoutDashboard, PlusCircle, ClipboardList, DollarSign } from 'lucide-react'
 import ClientView from '../client/ClientView'
 import InventoryManager from '../shared/InventoryManager'
 
@@ -98,6 +98,30 @@ export default function CashierView() {
               </div>
             </div>
           )}
+
+          {/* Quick Cashier Summary */}
+          <div className="glass-indigo animate-slide-up" style={{ marginBottom: '1.5rem', borderRadius: '20px', padding: '1rem', border: '1px solid rgba(79,70,229,0.2)' }}>
+             <h3 style={{ fontSize: '0.8rem', fontWeight: 800, margin: '0 0 0.75rem', color: 'var(--color-oriental-light)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+               <DollarSign size={14} /> RECAUDO DEL TURNO (ENTREGADOS)
+             </h3>
+             <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+               {['efectivo', 'nequi', 'daviplata'].map(method => {
+                 const total = deliveredToday.filter(o => o.pago === method).reduce((s, o) => s + o.total, 0)
+                 return (
+                   <div key={method}>
+                     <p style={{ margin: 0, fontSize: '0.65rem', color: 'var(--color-muted)', textTransform: 'uppercase' }}>{method}</p>
+                     <p style={{ margin: 0, fontSize: '1rem', fontWeight: 800 }}>{formatCOP(total)}</p>
+                   </div>
+                 )
+               })}
+               <div style={{ marginLeft: 'auto', textAlign: 'right', borderLeft: '1px solid rgba(255,255,255,0.1)', paddingLeft: '1.5rem' }}>
+                 <p style={{ margin: 0, fontSize: '0.65rem', color: 'var(--color-muted)', textTransform: 'uppercase' }}>Total General</p>
+                 <p style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: 'var(--color-accent)' }}>
+                   {formatCOP(deliveredToday.reduce((s, o) => s + o.total, 0))}
+                 </p>
+               </div>
+             </div>
+          </div>
 
           {/* Orders grid */}
           {activeOrders.length === 0 ? (

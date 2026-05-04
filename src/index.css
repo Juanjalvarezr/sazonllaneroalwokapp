@@ -223,7 +223,7 @@
     left: 0 !important;
     right: 0 !important;
     top: auto !important;
-    z-index: 100 !important;
+    z-index: 40 !important;
     border-radius: 32px 32px 0 0 !important;
     max-height: 85vh !important;
     overflow-y: auto !important;

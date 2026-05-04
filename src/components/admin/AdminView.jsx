@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react'
 import { useStore } from '../../store/StoreContext'
 import { formatCOP, formatTimeAgo } from '../../utils/formatters'
 import { StockBadge } from '../ui/StockBadge'
+import { initialData } from '../../data/initialData'
 import { 
   BarChart3, TrendingUp, ShoppingBag, DollarSign, Package, 
   ToggleLeft, ToggleRight, Edit3, Check, X, Plus, Trash2, 
-  Settings, ShoppingCart, User, CreditCard, Clock, AlertCircle
+  Settings, ShoppingCart, User, CreditCard, Clock, AlertCircle, QrCode, Smartphone
 } from 'lucide-react'
 import InventoryManager from '../shared/InventoryManager'
+import { saveInventoryCloud } from '../../services/firebaseService'
 
 export default function AdminView() {
   const { state, dispatch } = useStore()
@@ -68,7 +70,7 @@ function Dashboard({ analytics, orders, wokConfig, bebidas, almuerzo }) {
     return acc
   }, {})
 
-  const recentOrders = orders.slice(0, 10)
+  const recentOrders = [...orders].sort((a, b) => b.timestamp - a.timestamp).slice(0, 10)
 
   // Low stock items for replenishment (Bases, Proteins, Extras)
   const lowStock = [
@@ -86,7 +88,11 @@ function Dashboard({ analytics, orders, wokConfig, bebidas, almuerzo }) {
   ]
 
   const categoryLabels = { almuerzo: '🍱 Almuerzo', wok: '🍜 Wok', bebida: '🥤 Bebida' }
-  const categoryColors = { almuerzo: '#4ade80', wok: '#ea580c', bebida: '#818cf8' }
+  const categoryColors = { 
+    almuerzo: 'var(--color-success)', 
+    wok: 'var(--color-accent)', 
+    bebida: 'var(--color-oriental-light)' 
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -338,6 +344,58 @@ function AjustesManager({ pins }) {
         <p style={{ color: 'var(--color-muted)', fontSize: '0.72rem', marginTop: '0.5rem' }}>Esto aparecerá en el encabezado de todos tus clientes.</p>
       </div>
 
+      {/* Editor de Menú del Día */}
+      <div className="glass-orange" style={{ borderRadius: '24px', padding: '1.5rem', maxWidth: 600 }}>
+        <h3 style={{ fontFamily: 'Outfit,sans-serif', fontWeight: 700, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          🍱 Configurar Menú del Día (Almuerzo)
+        </h3>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+          <div>
+            <label style={{ fontSize: '0.75rem', color: 'var(--color-muted)', fontWeight: 600, display: 'block', marginBottom: 4 }}>PROTEÍNA PRINCIPAL</label>
+            <input 
+              value={almuerzo.proteina} 
+              onChange={e => dispatch({ type: 'UPDATE_ALMUERZO', changes: { proteina: e.target.value } })} 
+              style={inputStyle} 
+            />
+          </div>
+          <div>
+            <label style={{ fontSize: '0.75rem', color: 'var(--color-muted)', fontWeight: 600, display: 'block', marginBottom: 4 }}>PRECIO (COP)</label>
+            <input 
+              type="number"
+              value={almuerzo.precio} 
+              onChange={e => dispatch({ type: 'UPDATE_ALMUERZO', changes: { precio: Number(e.target.value) } })} 
+              style={inputStyle} 
+            />
+          </div>
+        </div>
+        <div>
+          <label style={{ fontSize: '0.75rem', color: 'var(--color-muted)', fontWeight: 600, display: 'block', marginBottom: 4 }}>ACOMPAÑAMIENTOS</label>
+          <input 
+            value={almuerzo.acompanamiento} 
+            onChange={e => dispatch({ type: 'UPDATE_ALMUERZO', changes: { acompanamiento: e.target.value } })} 
+            style={inputStyle} 
+          />
+        </div>
+        <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ flex: 1 }}>
+            <label style={{ fontSize: '0.75rem', color: 'var(--color-muted)', fontWeight: 600, display: 'block', marginBottom: 4 }}>STOCK DISPONIBLE</label>
+            <input 
+              type="number"
+              value={almuerzo.stock} 
+              onChange={e => dispatch({ type: 'UPDATE_ALMUERZO', changes: { stock: Number(e.target.value) } })} 
+              style={inputStyle} 
+            />
+          </div>
+          <button 
+            className="btn-primary" 
+            style={{ alignSelf: 'flex-end', height: '42px' }}
+            onClick={() => setSaved(true)}
+          >
+            Actualizar Almuerzo
+          </button>
+        </div>
+      </div>
+
       <div className="glass" style={{ borderRadius: '24px', padding: '1.5rem', maxWidth: 600 }}>
         <h3 style={{ fontFamily: 'Outfit,sans-serif', fontWeight: 700, marginBottom: '1.25rem' }}>🔐 Cambiar PINs de Acceso</h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -353,6 +411,67 @@ function AjustesManager({ pins }) {
             {saved ? '✓ Cambios Guardados' : 'Guardar PINs'}
           </button>
         </div>
+      </div>
+
+      <div className="glass" style={{ borderRadius: '24px', padding: '1.5rem', maxWidth: 600 }}>
+        <h3 style={{ fontFamily: 'Outfit,sans-serif', fontWeight: 700, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <QrCode size={18} color="var(--color-accent)" /> Menú Digital QR
+        </h3>
+        <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '1.5rem', borderRadius: '20px' }}>
+          <div style={{ background: 'white', padding: '10px', borderRadius: '12px', width: 120, height: 120, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {/* Visual simulation of QR */}
+            <div style={{ width: '100%', height: '100%', border: '4px solid #000', position: 'relative' }}>
+              <div style={{ position: 'absolute', top: 4, left: 4, width: 20, height: 20, border: '4px solid #000' }} />
+              <div style={{ position: 'absolute', top: 4, right: 4, width: 20, height: 20, border: '4px solid #000' }} />
+              <div style={{ position: 'absolute', bottom: 4, left: 4, width: 20, height: 20, border: '4px solid #000' }} />
+              <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', fontSize: '0.5rem', fontWeight: 900 }}>WOK</div>
+            </div>
+          </div>
+          <div>
+            <p style={{ margin: '0 0 8px', fontWeight: 700, fontSize: '0.9rem' }}>Escanea para pedir</p>
+            <p style={{ margin: '0 0 1rem', color: 'var(--color-muted)', fontSize: '0.75rem' }}>Tus clientes pueden escanear este código para abrir el menú en su celular y armar su Wok.</p>
+            <button className="btn-secondary" style={{ fontSize: '0.75rem' }}>
+              <Smartphone size={14} /> Probar Vista Móvil
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="glass" style={{ borderRadius: '24px', padding: '1.5rem', maxWidth: 600, border: '1px solid rgba(239,68,68,0.2)' }}>
+        <h3 style={{ fontFamily: 'Outfit,sans-serif', fontWeight: 700, marginBottom: '0.5rem', color: '#ef4444' }}>
+          🚩 Zona de Peligro
+        </h3>
+        <p style={{ color: 'var(--color-muted)', fontSize: '0.75rem', marginBottom: '1.5rem' }}>
+          Use esto solo al final del día. Borrará todos los pedidos actuales y reiniciará el contador de ventas a cero.
+        </p>
+        <button 
+          onClick={() => {
+            if(window.confirm('¿Estás seguro de cerrar la jornada? Esto borrará el historial de hoy.')) {
+              dispatch({ type: 'RESET_DAY' })
+            }
+          }}
+          className="btn-secondary" 
+          style={{ width: '100%', borderColor: '#ef4444', color: '#ef4444', justifyContent: 'center', marginBottom: '1rem' }}
+        >
+          Cerrar Jornada y Reiniciar Día
+        </button>
+
+        <button 
+          onClick={async () => {
+            if(window.confirm('¿Deseas subir el menú inicial a la nube?')) {
+              await saveInventoryCloud({
+                almuerzoEjecutivo: initialData.almuerzoEjecutivo,
+                wokConfig: initialData.wokConfig,
+                bebidas: initialData.bebidas
+              });
+              alert('¡Base de datos inicializada en la nube!');
+            }
+          }}
+          className="btn-primary" 
+          style={{ width: '100%', background: '#10b981', justifyContent: 'center' }}
+        >
+          Inicializar Menú en la Nube
+        </button>
       </div>
     </div>
   )

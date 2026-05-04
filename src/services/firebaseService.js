@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, query, orderBy, limit } from "firebase/firestore";
+import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, setDoc, query, orderBy, limit } from "firebase/firestore";
 import { FIREBASE_CONFIG, IS_FIREBASE_ENABLED } from "./firebase";
 
 // Inicializar solo si hay configuración
@@ -42,6 +42,23 @@ export const updateOrderStatusCloud = async (id, status) => {
 export const syncConfig = (callback) => {
   if (!db) return () => {};
   return onSnapshot(doc(db, "config", "main"), (doc) => {
+    if (doc.exists()) callback(doc.data());
+  });
+};
+
+// 5. Sincronizar Inventario Completo
+export const saveInventoryCloud = async (inventory) => {
+  if (!db) return;
+  try {
+    await setDoc(doc(db, "config", "inventory"), inventory, { merge: true });
+  } catch (e) { 
+    console.error("Error al subir inventario:", e); 
+  }
+};
+
+export const listenInventory = (callback) => {
+  if (!db) return () => {};
+  return onSnapshot(doc(db, "config", "inventory"), (doc) => {
     if (doc.exists()) callback(doc.data());
   });
 };

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useStore } from '../../store/StoreContext'
 import { formatCOP } from '../../utils/formatters'
-import { User, MessageCircle, CreditCard, Wallet, Banknote, FileText, Send, X, CheckCircle } from 'lucide-react'
+import { User, MessageCircle, CreditCard, Wallet, Banknote, FileText, Send, X, CheckCircle, MapPin } from 'lucide-react'
 
 const WHATSAPP_NUMBER = '573046668936'
 
@@ -11,15 +11,18 @@ const PAYMENT_METHODS = [
   { key: 'efectivo',   label: 'Efectivo',   icon: '💵', color: '#16a34a' },
 ]
 
-function buildWhatsAppMessage({ nombre, items, total, pago, nota }) {
+function buildWhatsAppMessage({ nombre, items, total, pago, nota, entrega, direccion }) {
   const itemLines = items
     .map(i => `  • ${i.nombre}: ${formatCOP(i.subtotal)}`)
     .join('\n')
 
   const pagoLabel = PAYMENT_METHODS.find(p => p.key === pago)?.label || pago
+  const entregaLabel = entrega === 'domicilio' ? '🛵 Domicilio' : '🥡 Recoger en Sitio'
 
   let msg = `🔥 *Nuevo Pedido — Sazón Llanero al Wok*\n\n`
   msg += `👤 *Cliente:* ${nombre}\n`
+  msg += `📍 *Entrega:* ${entregaLabel}\n`
+  if (entrega === 'domicilio' && direccion) msg += `🏠 *Dirección:* ${direccion}\n`
   msg += `📋 *Pedido:*\n${itemLines}\n`
   msg += `💰 *Total: ${formatCOP(total)}*\n`
   msg += `💳 *Pago:* ${pagoLabel}\n`
@@ -32,6 +35,8 @@ function buildWhatsAppMessage({ nombre, items, total, pago, nota }) {
 export default function CheckoutModal({ items, onClose, onSent, isStaffMode = false }) {
   const { dispatch } = useStore()
   const [nombre, setNombre] = useState(isStaffMode ? 'Pedido en Sitio' : '')
+  const [entrega, setEntrega] = useState('sitio') // 'sitio' o 'domicilio'
+  const [direccion, setDireccion] = useState('')
   const [pago, setPago] = useState('efectivo')
   const [nota, setNota] = useState('')
   const [sent, setSent] = useState(false)
@@ -42,7 +47,7 @@ export default function CheckoutModal({ items, onClose, onSent, isStaffMode = fa
     if (!nombre.trim()) return
     
     if (!isStaffMode) {
-      const msg = buildWhatsAppMessage({ nombre: nombre.trim(), items, total, pago, nota })
+      const msg = buildWhatsAppMessage({ nombre: nombre.trim(), items, total, pago, nota, entrega, direccion })
       window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, '_blank')
     }
     
@@ -51,8 +56,8 @@ export default function CheckoutModal({ items, onClose, onSent, isStaffMode = fa
       type: 'PLACE_ORDER', 
       cliente: nombre.trim(), 
       pago, 
-      nota,
-      status: isStaffMode ? 'en_cocina' : 'pendiente' // Direct to kitchen if staff
+      nota: `${entrega === 'domicilio' ? `[DOMICILIO: ${direccion}] ` : '[RECOGER] '}${nota}`,
+      status: isStaffMode ? 'en_cocina' : 'pendiente' 
     })
     
     setSent(true)
@@ -111,7 +116,52 @@ export default function CheckoutModal({ items, onClose, onSent, isStaffMode = fa
             }}
           />
         </div>
-      </div>
+      {/* Tipo de Entrega */}
+      {!isStaffMode && (
+        <div>
+          <label style={{ fontSize: '0.75rem', color: 'var(--color-muted)', fontWeight: 600, display: 'block', marginBottom: 8, textTransform: 'uppercase' }}>
+            ¿Cómo lo quieres? *
+          </label>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem' }}>
+            <button onClick={() => setEntrega('sitio')} style={{
+              padding: '0.6rem', borderRadius: '12px', border: '2px solid',
+              borderColor: entrega === 'sitio' ? 'var(--color-accent)' : 'rgba(255,255,255,0.1)',
+              background: entrega === 'sitio' ? 'rgba(234,88,12,0.1)' : 'transparent',
+              color: entrega === 'sitio' ? 'white' : 'var(--color-muted)',
+              fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.85rem'
+            }}>🥡 Recoger</button>
+            <button onClick={() => setEntrega('domicilio')} style={{
+              padding: '0.6rem', borderRadius: '12px', border: '2px solid',
+              borderColor: entrega === 'domicilio' ? 'var(--color-accent)' : 'rgba(255,255,255,0.1)',
+              background: entrega === 'domicilio' ? 'rgba(234,88,12,0.1)' : 'transparent',
+              color: entrega === 'domicilio' ? 'white' : 'var(--color-muted)',
+              fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.85rem'
+            }}>🛵 Domicilio</button>
+          </div>
+        </div>
+      )}
+
+      {/* Dirección (si es domicilio) */}
+      {entrega === 'domicilio' && (
+        <div className="animate-slide-up">
+          <label style={{ fontSize: '0.75rem', color: 'var(--color-muted)', fontWeight: 600, display: 'block', marginBottom: 6, textTransform: 'uppercase' }}>
+            Dirección de Entrega *
+          </label>
+          <div style={{ position: 'relative' }}>
+            <MapPin size={15} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--color-muted)' }} />
+            <input
+              value={direccion}
+              onChange={e => setDireccion(e.target.value)}
+              placeholder="Barrio, Calle, Apto..."
+              style={{
+                width: '100%', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
+                borderRadius: '14px', color: 'var(--color-text)', padding: '0.65rem 0.9rem 0.65rem 2.2rem',
+                fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box',
+              }}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Método de pago */}
       <div>
@@ -138,7 +188,7 @@ export default function CheckoutModal({ items, onClose, onSent, isStaffMode = fa
       </div>
 
       {/* Nota */}
-      <div>
+      <div style={{ marginBottom: '0.5rem' }}>
         <label style={{ fontSize: '0.75rem', color: 'var(--color-muted)', fontWeight: 600, display: 'block', marginBottom: 6, textTransform: 'uppercase' }}>
           Nota adicional (opcional)
         </label>

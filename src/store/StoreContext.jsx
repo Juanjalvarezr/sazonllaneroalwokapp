@@ -1,6 +1,6 @@
 import { createContext, useContext, useReducer, useEffect } from 'react'
 import { initialData } from '../data/initialData'
-import { saveOrderCloud, listenOrders, updateOrderStatusCloud, syncConfig } from '../services/firebaseService'
+import { saveOrderCloud, listenOrders, updateOrderStatusCloud, syncConfig, listenInventory, saveInventoryCloud } from '../services/firebaseService'
 
 const StoreContext = createContext(null)
 const STORAGE_KEY = 'sgr_sazon_llanero_v1'
@@ -42,7 +42,7 @@ function reducer(state, action) {
 
     case 'PLACE_ORDER': {
       const order = {
-        id: `ORD-${Date.now()}`,
+        id: `ORD-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
         items: state.cart,
         total: state.cart.reduce((s, i) => s + i.subtotal, 0),
         status: 'pendiente',
@@ -54,7 +54,7 @@ function reducer(state, action) {
       }
       // Push to cloud
       saveOrderCloud(order)
-      return { ...state, cart: [] } // Local state will sync back from cloud listener
+      return { ...state, cart: [] }
     }
 
     case 'UPDATE_ORDER_STATUS': {
@@ -80,9 +80,10 @@ function reducer(state, action) {
                 proteinas: updatedWokConfig.proteinas.map(p => 
                   p.id === item.proteinaId ? { ...p, stock: Math.max(0, p.stock - item.cantidad) } : p
                 ),
-                extras: updatedWokConfig.extras.map(e => 
-                  item.extrasIds?.includes(e.id) ? { ...e, stock: Math.max(0, e.stock - item.cantidad) } : e
-                )
+                extras: updatedWokConfig.extras.map(e => {
+                  const selection = item.extras?.find(ex => ex.id === e.id)
+                  return selection ? { ...e, stock: Math.max(0, e.stock - (selection.quantity * item.cantidad)) } : e
+                })
               }
             } else if (item.tipo === 'bebida') {
               updatedBebidas = updatedBebidas.map(b =>
@@ -107,6 +108,13 @@ function reducer(state, action) {
         })
         return acc
       }, { almuerzo: 0, wok: 0, bebida: 0 })
+
+      // Push inventory update to cloud
+      saveInventoryCloud({
+        almuerzoEjecutivo: updatedAlmuerzo,
+        wokConfig: updatedWokConfig,
+        bebidas: updatedBebidas
+      })
 
       return {
         ...state,
@@ -171,6 +179,22 @@ function reducer(state, action) {
     case 'UPDATE_PINS':
       return { ...state, pins: { ...state.pins, ...action.changes } }
 
+    case 'RESET_DAY':
+      return { 
+        ...state, 
+        orders: [], 
+        gastos: [], 
+        analytics: { ventasTotales: 0, cantidadPedidos: 0, ticketPromedio: 0, porCategoria: { almuerzo: 0, wok: 0, bebida: 0 } } 
+      }
+    
+    case 'SYNC_CLOUD_INVENTORY':
+      return {
+        ...state,
+        almuerzoEjecutivo: action.inventory.almuerzoEjecutivo || state.almuerzoEjecutivo,
+        wokConfig: action.inventory.wokConfig || state.wokConfig,
+        bebidas: action.inventory.bebidas || state.bebidas
+      }
+
     default:
       return state
   }
@@ -194,8 +218,11 @@ export function StoreProvider({ children }) {
     const unsubConfig = syncConfig((config) => {
       dispatch({ type: 'SYNC_CLOUD_CONFIG', config });
     });
+    const unsubInv = listenInventory((inventory) => {
+      dispatch({ type: 'SYNC_CLOUD_INVENTORY', inventory });
+    });
 
-    return () => { unsubOrders(); unsubConfig(); };
+    return () => { unsubOrders(); unsubConfig(); unsubInv(); };
   }, [])
 
   return (

@@ -37,10 +37,34 @@ export default function KitchenView() {
         <div style={{ display: 'flex', gap: '1rem' }}>
           <div style={{ textAlign: 'right' }}>
             <p style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800, fontFamily: 'Outfit' }}>{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-            <p style={{ margin: 0, color: '#4ade80', fontSize: '0.75rem', fontWeight: 700 }}>● SISTEMA ACTIVO</p>
-          </div>
         </div>
       </div>
+      
+      {/* Aggregated Preparation Summary (Batching) */}
+      {pendingOrders.length > 0 && (
+        <div className="glass-orange animate-slide-up" style={{ 
+          borderRadius: '24px', padding: '1.25rem', marginBottom: '2rem', 
+          border: '1px solid rgba(234,88,12,0.3)',
+          background: 'linear-gradient(135deg, rgba(234,88,12,0.1), rgba(2,6,23,0.4))' 
+        }}>
+          <h3 style={{ fontFamily: 'Outfit', fontSize: '0.9rem', fontWeight: 800, margin: '0 0 1rem', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-accent-light)' }}>
+            <AlertCircle size={18} /> RESUMEN DE PREPARACIÓN TOTAL
+          </h3>
+          <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+            {Object.entries(pendingOrders.reduce((acc, order) => {
+              order.items.forEach(item => {
+                acc[item.nombre] = (acc[item.nombre] || 0) + item.cantidad
+              })
+              return acc
+            }, {})).map(([name, qty]) => (
+              <div key={name} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.05)', padding: '8px 16px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <span style={{ fontWeight: 900, color: 'var(--color-accent)', fontSize: '1.2rem' }}>{qty}x</span>
+                <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>{name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {pendingOrders.length === 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '50vh', opacity: 0.3 }}>
