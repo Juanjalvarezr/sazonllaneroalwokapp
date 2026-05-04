@@ -28,13 +28,13 @@ export default function ClientView({ isStaffMode = false }) {
   }
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '1.5rem', display: 'grid', gridTemplateColumns: cartOpen ? '1fr 380px' : '1fr', gap: '1.5rem', alignItems: 'start', transition: 'grid-template-columns 0.3s' }}>
+    <div className="app-layout" style={{ maxWidth: 1200, margin: '0 auto', padding: '1.5rem', display: 'grid', gridTemplateColumns: cartOpen ? '1fr 380px' : '1fr', gap: '1.5rem', alignItems: 'start', transition: 'grid-template-columns 0.3s' }}>
       
       {/* Left Menu Content */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
         
         {/* 1. HERO - BIENVENIDA */}
-        <div className="glass-orange animate-slide-up" style={{ borderRadius: '32px', padding: '2rem 2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1.5rem' }}>
+        <div className="glass-orange hero-container animate-slide-up" style={{ borderRadius: '32px', padding: '2rem 2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1.5rem' }}>
           <div style={{ flex: 1, minWidth: 280 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
               <div style={{ padding: '4px 10px', borderRadius: '20px', background: 'rgba(34,197,94,0.15)', color: '#4ade80', fontSize: '0.65rem', fontWeight: 800, border: '1px solid rgba(34,197,94,0.3)' }}>
@@ -141,17 +141,22 @@ export default function ClientView({ isStaffMode = false }) {
 
       {/* Right Cart Panel (Floating sticky) */}
       {cartOpen && (
-        <div className="glass animate-slide-up" style={{ borderRadius: '32px', padding: '1.5rem', position: 'sticky', top: '100px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
+        <div className="glass cart-panel animate-slide-up" style={{ borderRadius: '32px', padding: '1.5rem', position: 'sticky', top: '100px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
             <h2 style={{ fontFamily: 'Outfit,sans-serif', fontWeight: 800, fontSize: '1.2rem', margin: 0, display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
               <ShoppingCart size={20} color="var(--color-accent)" />
               Mi Carrito
             </h2>
-            {cart.length > 0 && (
-              <span style={{ color: 'var(--color-accent)', fontFamily: 'Outfit,sans-serif', fontWeight: 800, fontSize: '1.1rem' }}>
-                {formatCOP(cartTotal)}
-              </span>
-            )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              {cart.length > 0 && (
+                <span style={{ color: 'var(--color-accent)', fontFamily: 'Outfit,sans-serif', fontWeight: 800, fontSize: '1.1rem' }}>
+                  {formatCOP(cartTotal)}
+                </span>
+              )}
+              <button onClick={() => setCartOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--color-muted)', cursor: 'pointer' }}>
+                <X size={20} />
+              </button>
+            </div>
           </div>
           <Cart items={cart} onRemove={handleRemove} onConfirm={handleConfirm} isStaffMode={isStaffMode} />
         </div>
@@ -161,4 +166,4 @@ export default function ClientView({ isStaffMode = false }) {
 }
 
 // Inline helper for bebidas section
-import { PlusCircle } from 'lucide-react'
+import { PlusCircle, X } from 'lucide-react'

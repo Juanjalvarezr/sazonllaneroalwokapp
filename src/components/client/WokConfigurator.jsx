@@ -88,7 +88,7 @@ export default function WokConfigurator({ onAdd, onClose }) {
         <label style={{ fontSize: '0.75rem', color: 'var(--color-muted)', fontWeight: 600, display: 'block', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
           1. Elige la base
         </label>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.75rem' }}>
           {wokConfig.bases.filter(b => b.activo).map(b => (
             <button key={b.id} onClick={() => setSelectedBase(b)} style={{
               padding: '0.85rem', borderRadius: '16px', border: '2px solid',

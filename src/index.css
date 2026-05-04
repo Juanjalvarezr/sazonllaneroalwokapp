@@ -210,3 +210,74 @@
   .animate-fade-in  { animation: fadeIn 0.3s ease both; }
   .animate-pulse-orange { animation: pulse-orange 2s infinite; }
 }
+
+/* ─── Responsividad ──────────────────────────────────────────────────────── */
+
+@media (max-width: 1024px) {
+  .app-layout {
+    grid-template-columns: 1fr !important;
+  }
+  .cart-panel {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    z-index: 100 !important;
+    border-radius: 32px 32px 0 0 !important;
+    max-height: 85vh !important;
+    overflow-y: auto !important;
+    box-shadow: 0 -20px 50px rgba(0,0,0,0.5) !important;
+    animation: slideUpMobile 0.4s cubic-bezier(0.16, 1, 0.3, 1) both !important;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    font-size: 14px;
+  }
+  
+  body {
+    padding: 0;
+  }
+
+  nav {
+    padding: 0.75rem 1rem !important;
+  }
+
+  .glass {
+    padding: 1.25rem !important;
+    border-radius: 20px !important;
+  }
+
+  h1 {
+    font-size: 1.8rem !important;
+  }
+
+  .hero-container {
+    padding: 1.5rem !important;
+    gap: 1rem !important;
+    text-align: center !important;
+    flex-direction: column !important;
+  }
+
+  .grid-responsive {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .btn-primary, .btn-secondary {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 1.5rem !important; }
+  .logo-img-large { height: 60px !important; width: 60px !important; }
+}
+
+@keyframes slideUpMobile {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
