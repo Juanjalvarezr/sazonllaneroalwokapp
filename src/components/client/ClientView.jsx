@@ -69,27 +69,7 @@ export default function ClientView({ isStaffMode = false }) {
             </p>
           </div>
           
-          <button
-            onClick={() => setCartOpen(!cartOpen)}
-            className="btn-primary animate-pulse-orange"
-            style={{ position: 'relative', fontSize: '1rem', padding: '0.85rem 1.75rem', height: 'fit-content' }}
-          >
-            <ShoppingCart size={22} />
-            Mi Carrito
-            {cart.length > 0 && (
-              <span style={{
-                position: 'absolute', top: -8, right: -8,
-                width: 24, height: 24, borderRadius: '50%',
-                background: '#22c55e', color: 'white',
-                fontSize: '0.75rem', fontWeight: 800,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                border: '2px solid var(--color-bg)',
-                boxShadow: '0 0 10px rgba(34,197,94,0.4)'
-              }}>
-                {cart.length}
-              </span>
-            )}
-          </button>
+          </div>
         </div>
 
         {/* 2. MENÚ DEL DÍA (ALMUERZO ESPECIAL) */}
@@ -112,29 +92,6 @@ export default function ClientView({ isStaffMode = false }) {
           <MenuWoks onAddToCart={handleAddToCart} />
         </section>
 
-        {/* 4. BEBIDAS Y REFRESCOS */}
-        <section className="animate-slide-up" style={{ animationDelay: '0.3s', marginBottom: '3rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
-            <Beer size={22} color="#818cf8" />
-            <h2 style={{ fontFamily: 'Outfit,sans-serif', fontSize: '1.3rem', fontWeight: 800, margin: 0 }}>Bebidas y Refrescos</h2>
-          </div>
-          <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '24px', padding: '1.5rem', border: '1px solid rgba(255,255,255,0.05)' }}>
-             {/* We can directly map bebidas here or keep MenuBebidas component if created */}
-             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
-               {state.bebidas.filter(b => b.activo).map(b => (
-                 <div key={b.id} className="glass card" style={{ borderRadius: '20px', padding: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <span style={{ fontSize: '2rem' }}>{b.emoji}</span>
-                    <div style={{ flex: 1 }}>
-                      <p style={{ margin: 0, fontWeight: 700, fontSize: '0.95rem' }}>{b.nombre}</p>
-                      <p style={{ margin: 0, color: 'var(--color-accent)', fontWeight: 700, fontSize: '0.9rem' }}>{formatCOP(b.precio)}</p>
-                    </div>
-                    <button onClick={() => handleAddToCart({ cartId: `${b.id}-${Date.now()}`, itemId: b.id, tipo: 'bebida', nombre: b.nombre, subtotal: b.precio, emoji: b.emoji, cantidad: 1 })} className="btn-secondary" style={{ padding: '0.5rem', borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <PlusCircle size={20} />
-                    </button>
-                 </div>
-               ))}
-             </div>
-          </div>
         </section>
       </div>
 
@@ -159,6 +116,40 @@ export default function ClientView({ isStaffMode = false }) {
           </div>
           <Cart items={cart} onRemove={handleRemove} onConfirm={handleConfirm} isStaffMode={isStaffMode} />
         </div>
+      )}
+
+      {/* Floating Cart Button (Only when not empty) */}
+      {cart.length > 0 && !cartOpen && (
+        <button
+          onClick={() => setCartOpen(true)}
+          className="btn-primary animate-zoom-in animate-pulse-orange"
+          style={{
+            position: 'fixed',
+            bottom: '2rem',
+            right: '2rem',
+            width: '64px',
+            height: '64px',
+            borderRadius: '50%',
+            padding: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 30,
+            boxShadow: '0 10px 30px rgba(234,88,12,0.4)'
+          }}
+        >
+          <ShoppingCart size={28} />
+          <span style={{
+            position: 'absolute', top: 0, right: 0,
+            width: 22, height: 22, borderRadius: '50%',
+            background: '#22c55e', color: 'white',
+            fontSize: '0.7rem', fontWeight: 800,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            border: '2px solid white'
+          }}>
+            {cart.length}
+          </span>
+        </button>
       )}
     </div>
   )
