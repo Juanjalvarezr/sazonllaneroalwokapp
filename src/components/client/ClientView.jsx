@@ -9,6 +9,12 @@ import Cart from './Cart'
 export default function ClientView({ isStaffMode = false }) {
   const { state, dispatch } = useStore()
   const [cartOpen, setCartOpen] = useState(false)
+  
+  useEffect(() => {
+    const handleToggle = () => setCartOpen(prev => !prev)
+    window.addEventListener('toggleCart', handleToggle)
+    return () => window.removeEventListener('toggleCart', handleToggle)
+  }, [])
 
   const cart = state.cart
   const cartTotal = cart.reduce((s, i) => s + i.subtotal, 0)
@@ -118,39 +124,6 @@ export default function ClientView({ isStaffMode = false }) {
         </div>
       )}
 
-      {/* Floating Cart Button (Only when not empty) */}
-      {cart.length > 0 && !cartOpen && (
-        <button
-          onClick={() => setCartOpen(true)}
-          className="btn-primary animate-zoom-in animate-pulse-orange"
-          style={{
-            position: 'fixed',
-            bottom: '2rem',
-            right: '2rem',
-            width: '64px',
-            height: '64px',
-            borderRadius: '50%',
-            padding: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 30,
-            boxShadow: '0 10px 30px rgba(234,88,12,0.4)'
-          }}
-        >
-          <ShoppingCart size={28} />
-          <span style={{
-            position: 'absolute', top: 0, right: 0,
-            width: 22, height: 22, borderRadius: '50%',
-            background: '#22c55e', color: 'white',
-            fontSize: '0.7rem', fontWeight: 800,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            border: '2px solid white'
-          }}>
-            {cart.length}
-          </span>
-        </button>
-      )}
     </div>
   )
 }

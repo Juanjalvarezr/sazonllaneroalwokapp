@@ -103,25 +103,57 @@ export default function Navbar({ role, setRole }) {
           ))}
         </div>
 
-        {/* Right: role indicator (Only show if not cliente) */}
-        {!isCliente && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{
-              padding: '0.4rem 1rem', borderRadius: '40px',
-              background: 'rgba(255,255,255,0.05)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              fontSize: '0.75rem', fontWeight: 600,
-              color: 'white',
-              display: 'flex', alignItems: 'center', gap: '0.4rem',
-            }}>
-              <ChefHat size={13} />
-              {roleLabels[role]}
-            </div>
-            <button className="btn-danger" style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem' }} onClick={() => setRole('cliente')}>
-              <LogOut size={13} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          {isCliente && (
+            <button 
+              onClick={() => window.dispatchEvent(new CustomEvent('toggleCart'))}
+              style={{ 
+                position: 'relative', 
+                background: 'rgba(234,88,12,0.1)', 
+                border: '1px solid rgba(234,88,12,0.3)',
+                padding: '8px', 
+                borderRadius: '12px', 
+                color: 'var(--color-accent)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              <ShoppingCart size={20} />
+              {state.cart.length > 0 && (
+                <span style={{
+                  position: 'absolute', top: -5, right: -5,
+                  width: 18, height: 18, borderRadius: '50%',
+                  background: '#22c55e', color: 'white',
+                  fontSize: '0.65rem', fontWeight: 800,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  border: '2px solid var(--color-surface)'
+                }}>
+                  {state.cart.length}
+                </span>
+              )}
             </button>
-          </div>
-        )}
+          )}
+
+          {!isCliente && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              <div style={{
+                padding: '0.4rem 0.8rem', borderRadius: '40px',
+                background: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                fontSize: '0.75rem', fontWeight: 600,
+                color: 'white',
+                display: 'flex', alignItems: 'center', gap: '0.4rem',
+              }}>
+                <ChefHat size={13} />
+                {roleLabels[role]}
+              </div>
+              <button className="btn-danger" style={{ padding: '0.4rem 0.6rem', fontSize: '0.75rem' }} onClick={() => setRole('cliente')}>
+                <LogOut size={13} />
+              </button>
+            </div>
+          )}
+        </div>
       </nav>
 
       {/* PIN Modal */}
