@@ -1,17 +1,14 @@
 // ─── Configuración de Firebase para Sazón Llanero ─────────────────────────────
-// Para que esto funcione, debes instalar firebase: npm install firebase
+// Sincronización en tiempo real activada
 
-// IMPORTANTE: Sustituye estos valores con los de tu consola de Firebase
 const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "TU_PROYECTO.firebaseapp.com",
-  projectId: "TU_PROYECTO",
-  storageBucket: "TU_PROYECTO.appspot.com",
-  messagingSenderId: "TU_ID",
-  appId: "TU_APP_ID"
+  apiKey: "AIzaSyARw_FJvsp6EyXi0i5INWn6uq6hF42px4A",
+  authDomain: "sazonllaneroapp.firebaseapp.com",
+  projectId: "sazonllaneroapp",
+  storageBucket: "sazonllaneroapp.firebasestorage.app",
+  messagingSenderId: "595997182006",
+  appId: "1:595997182006:web:39fa3f9c0e1b52208f3097"
 };
 
-// Por ahora, exportamos un objeto vacío o simulado si no hay configuración
-// para que la app no se rompa antes de que pegues tus llaves reales.
 export const FIREBASE_CONFIG = firebaseConfig;
-export const IS_FIREBASE_ENABLED = firebaseConfig.apiKey !== "TU_API_KEY";
+export const IS_FIREBASE_ENABLED = true;
