@@ -302,7 +302,7 @@ function GastosManager({ gastos, analytics }) {
 // ─── Ajustes Manager ───────────────────────────────────────────────────────
 function AjustesManager({ pins }) {
   const { state, dispatch } = useStore()
-  const { config } = state
+  const { config, almuerzoEjecutivo: almuerzo } = state
   const [pinVals, setPinVals] = useState({ cajero: pins.cajero, admin: pins.admin })
   const [locVal, setLocVal] = useState(config.ubicacion)
   const [saved, setSaved] = useState(false)

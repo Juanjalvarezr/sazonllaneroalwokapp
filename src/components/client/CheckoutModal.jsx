@@ -116,6 +116,8 @@ export default function CheckoutModal({ items, onClose, onSent, isStaffMode = fa
             }}
           />
         </div>
+      </div>
+
       {/* Tipo de Entrega */}
       {!isStaffMode && (
         <div>

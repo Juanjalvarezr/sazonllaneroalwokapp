@@ -20,7 +20,7 @@ export default function KitchenView() {
   }, [orders.length])
 
   const handleNextStatus = (orderId, currentStatus) => {
-    const next = currentStatus === 'pendiente' ? 'en_cocina' : 'entregado'
+    const next = currentStatus === 'pendiente' ? 'en_cocina' : 'listo'
     dispatch({ type: 'UPDATE_ORDER_STATUS', orderId, status: next })
   }
 
@@ -37,6 +37,7 @@ export default function KitchenView() {
         <div style={{ display: 'flex', gap: '1rem' }}>
           <div style={{ textAlign: 'right' }}>
             <p style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800, fontFamily: 'Outfit' }}>{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+          </div>
         </div>
       </div>
       

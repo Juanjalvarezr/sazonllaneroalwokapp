@@ -32,8 +32,8 @@ export default function MenuRapido({ onAddToCart }) {
 
       <div style={{ display: 'flex', gap: '2rem', alignItems: 'center', flexWrap: 'wrap' }}>
         {/* Left: Plate Preview */}
-        <div style={{ position: 'relative' }}>
-          <div style={{ fontSize: '5rem', filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.3))' }}>🍱</div>
+        <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', width: '100%', maxWidth: '120px', margin: '0 auto' }}>
+          <div style={{ fontSize: 'clamp(3rem, 10vw, 5rem)', filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.3))' }}>🍱</div>
           <div style={{ position: 'absolute', bottom: 5, right: 0, background: '#4ade80', color: 'black', borderRadius: '50%', padding: '4px', border: '2px solid white' }}>
             <Sun size={14} />
           </div>
@@ -79,6 +79,7 @@ export default function MenuRapido({ onAddToCart }) {
               padding: '1.25rem 2rem',
               borderRadius: '20px',
               fontSize: '1.1rem',
+              width: '100%',
               minWidth: 180,
               background: added ? '#16a34a' : 'linear-gradient(135deg, #16a34a, #15803d)',
               boxShadow: '0 10px 25px rgba(22,163,74,0.3)',

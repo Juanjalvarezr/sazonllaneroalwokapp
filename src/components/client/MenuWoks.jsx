@@ -44,9 +44,9 @@ export default function MenuWoks({ onAddToCart }) {
       >
         <div style={{ position: 'absolute', top: -40, right: -40, width: 180, height: 180, borderRadius: '50%', background: 'radial-gradient(circle, rgba(234,88,12,0.2), transparent)' }} />
         
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
           <div style={{ 
-            fontSize: '4.5rem', 
+            fontSize: 'clamp(3rem, 10vw, 4.5rem)', 
             filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.3))' 
           }}>🍜</div>
           

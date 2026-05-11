@@ -6,6 +6,7 @@ import ClientView from './components/client/ClientView'
 import CashierView from './components/cashier/CashierView'
 import AdminView from './components/admin/AdminView'
 import KitchenView from './components/kitchen/KitchenView'
+import BottomNav from './components/layout/BottomNav'
 
 function AppContent() {
   const [role, setRole] = useState('cliente')
@@ -19,6 +20,7 @@ function AppContent() {
         {role === 'cocina' && <KitchenView />}
         {role === 'admin' && <AdminView />}
       </main>
+      <BottomNav role={role} setRole={setRole} />
     </div>
   )
 }

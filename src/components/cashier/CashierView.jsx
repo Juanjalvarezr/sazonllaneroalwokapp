@@ -8,7 +8,8 @@ import InventoryManager from '../shared/InventoryManager'
 
 const STATUS_CONFIG = {
   pendiente:   { label: 'Pendiente',  next: 'en_cocina',  nextLabel: 'Pasar a Cocina', color: '#facc15', bg: 'rgba(234,179,8,0.12)',   border: 'rgba(234,179,8,0.3)',   icon: Clock      },
-  en_cocina:   { label: 'En Cocina', next: 'entregado',  nextLabel: 'Marcar Entregado', color: '#fb923c', bg: 'rgba(234,88,12,0.12)',  border: 'rgba(234,88,12,0.3)',   icon: ChefHat    },
+  en_cocina:   { label: 'En Cocina', next: 'listo',      nextLabel: 'Marcar Listo',    color: '#fb923c', bg: 'rgba(234,88,12,0.12)',  border: 'rgba(234,88,12,0.3)',   icon: ChefHat    },
+  listo:       { label: 'Listo',     next: 'entregado',  nextLabel: 'Marcar Entregado', color: '#22c55e', bg: 'rgba(34,197,94,0.12)',  border: 'rgba(34,197,94,0.3)',   icon: CheckCircle},
   entregado:   { label: 'Entregado', next: null,         nextLabel: null,               color: '#4ade80', bg: 'rgba(34,197,94,0.1)',   border: 'rgba(34,197,94,0.25)',  icon: CheckCircle},
 }
 
@@ -24,6 +25,8 @@ export default function CashierView() {
   const almCritical      = almuerzoEjecutivo.activo && almuerzoEjecutivo.stock < 5
 
   const activeOrders = orders.filter(o => o.status !== 'entregado')
+  const readyOrders  = activeOrders.filter(o => o.status === 'listo')
+  const otherOrders  = activeOrders.filter(o => o.status !== 'listo')
   const deliveredToday = orders.filter(o => o.status === 'entregado')
 
   const handleStatus = (orderId, nextStatus) => {
@@ -64,7 +67,7 @@ export default function CashierView() {
               boxShadow: activeTab === key ? '0 0 16px rgba(234,88,12,0.3)' : 'none',
             }}>
               <Icon size={15} />
-              {label}
+              <span className="hide-mobile">{label}</span>
             </button>
           ))}
         </div>
@@ -102,9 +105,9 @@ export default function CashierView() {
           {/* Quick Cashier Summary */}
           <div className="glass-indigo animate-slide-up" style={{ marginBottom: '1.5rem', borderRadius: '20px', padding: '1rem', border: '1px solid rgba(79,70,229,0.2)' }}>
              <h3 style={{ fontSize: '0.8rem', fontWeight: 800, margin: '0 0 0.75rem', color: 'var(--color-oriental-light)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-               <DollarSign size={14} /> RECAUDO DEL TURNO (ENTREGADOS)
+                <DollarSign size={14} /> RECAUDO DEL TURNO (ENTREGADOS)
              </h3>
-             <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+             <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
                {['efectivo', 'nequi', 'daviplata'].map(method => {
                  const total = deliveredToday.filter(o => o.pago === method).reduce((s, o) => s + o.total, 0)
                  return (
@@ -123,90 +126,42 @@ export default function CashierView() {
              </div>
           </div>
 
-          {/* Orders grid */}
-          {activeOrders.length === 0 ? (
-            <div className="glass animate-zoom-in" style={{ borderRadius: '28px', padding: '4rem', textAlign: 'center' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '0.75rem', opacity: 0.3 }}>🍽️</div>
-              <p style={{ color: 'var(--color-muted)' }}>No hay pedidos activos en este momento</p>
-            </div>
-          ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '1rem' }}>
-              {activeOrders.map((order, i) => {
-                const cfg = STATUS_CONFIG[order.status]
-                const Icon = cfg.icon
-                return (
-                  <div key={order.id} className="glass animate-zoom-in" style={{ borderRadius: '24px', padding: '1.5rem', animationDelay: `${i * 0.07}s`, borderLeft: `4px solid ${cfg.color}`, position: 'relative' }}>
-                    {/* Order header */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                      <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <span style={{ fontFamily: 'Outfit,sans-serif', fontWeight: 700, fontSize: '0.95rem', color: 'var(--color-accent)' }}>{order.id}</span>
-                          <span style={{ fontSize: '0.65rem', background: 'rgba(255,255,255,0.08)', padding: '2px 6px', borderRadius: '4px', color: 'var(--color-muted)' }}>{formatTimeAgo(order.timestamp)}</span>
-                        </div>
-                        <p style={{ color: 'var(--color-muted)', fontSize: '0.65rem', margin: '2px 0 0' }}>{formatDate(order.timestamp)}</p>
-                      </div>
-                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', background: cfg.bg, border: `1px solid ${cfg.border}`, color: cfg.color, borderRadius: '999px', padding: '4px 12px', fontSize: '0.75rem', fontWeight: 700 }}>
-                        <Icon size={14} /> {cfg.label}
-                      </div>
-                    </div>
-
-                    {/* Client Info */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem', padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', fontWeight: 600 }}>
-                        <User size={14} color="var(--color-muted)" />
-                        {order.cliente || 'Anónimo'}
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
-                        <CreditCard size={14} color="var(--color-muted)" />
-                        <span style={{ textTransform: 'capitalize' }}>{order.pago}</span>
-                      </div>
-                      {order.nota && (
-                        <div style={{ display: 'flex', alignItems: 'start', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--color-muted)', fontStyle: 'italic' }}>
-                          <FileText size={14} style={{ marginTop: 2 }} />
-                          "{order.nota}"
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Items */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginBottom: '1rem' }}>
-                      {order.items.map(item => (
-                        <div key={item.cartId} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.88rem' }}>
-                          <span>{item.emoji}</span>
-                          <span style={{ flex: 1, color: 'var(--color-text)', opacity: 0.9 }}>{item.nombre}</span>
-                          <span style={{ color: 'var(--color-muted)', fontSize: '0.75rem' }}>x{item.cantidad}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Total */}
-                    <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ color: 'var(--color-muted)', fontSize: '0.85rem' }}>Total</span>
-                      <span style={{ fontFamily: 'Outfit,sans-serif', fontWeight: 800, color: 'var(--color-accent)', fontSize: '1.2rem' }}>{formatCOP(order.total)}</span>
-                    </div>
-
-                    {/* Action button */}
-                    {cfg.next && (
-                      <button
-                        onClick={() => handleStatus(order.id, cfg.next)}
-                        className="btn-primary"
-                        style={{ 
-                          width: '100%', 
-                          justifyContent: 'center', 
-                          marginTop: '1rem', 
-                          padding: '0.75rem', 
-                          background: order.status === 'en_cocina' ? 'linear-gradient(135deg,#22c55e,#16a34a)' : undefined, 
-                          boxShadow: order.status === 'en_cocina' ? '0 0 20px rgba(34,197,94,0.3)' : undefined 
-                        }}
-                      >
-                        {cfg.nextLabel}
-                      </button>
-                    )}
-                  </div>
-                )
-              })}
+          {/* READY FOR DELIVERY SECTION */}
+          {readyOrders.length > 0 && (
+            <div style={{ marginBottom: '2.5rem' }}>
+              <h2 style={{ fontFamily: 'Outfit', fontSize: '1.2rem', fontWeight: 800, color: '#4ade80', display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem' }}>
+                <div className="animate-pulse-green" style={{ width: 12, height: 12, borderRadius: '50%', background: '#4ade80' }}></div>
+                LISTOS PARA ENTREGAR ({readyOrders.length})
+              </h2>
+              <div className="grid-responsive" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))' }}>
+                {readyOrders.map((order, i) => (
+                  <OrderCard key={order.id} order={order} index={i} handleStatus={handleStatus} isReady={true} />
+                ))}
+              </div>
             </div>
           )}
+
+          {/* OTHER ORDERS SECTION */}
+          <div>
+            {activeOrders.length > 0 && (
+              <h2 style={{ fontFamily: 'Outfit', fontSize: '1rem', fontWeight: 700, color: 'var(--color-muted)', marginBottom: '1rem' }}>
+                EN PROCESO ({otherOrders.length})
+              </h2>
+            )}
+            
+            {activeOrders.length === 0 ? (
+              <div className="glass animate-zoom-in" style={{ borderRadius: '28px', padding: '4rem', textAlign: 'center' }}>
+                <div style={{ fontSize: '3rem', marginBottom: '0.75rem', opacity: 0.3 }}>🍽️</div>
+                <p style={{ color: 'var(--color-muted)' }}>No hay pedidos activos en este momento</p>
+              </div>
+            ) : (
+              <div className="grid-responsive">
+                {otherOrders.map((order, i) => (
+                  <OrderCard key={order.id} order={order} index={i} handleStatus={handleStatus} isReady={false} />
+                ))}
+              </div>
+            )}
+          </div>
 
           {/* Delivered today */}
           {deliveredToday.length > 0 && (
@@ -231,6 +186,93 @@ export default function CashierView() {
             </div>
           )}
         </div>
+      )}
+    </div>
+  )
+}
+
+function OrderCard({ order, index, handleStatus, isReady }) {
+  const cfg = STATUS_CONFIG[order.status]
+  const Icon = cfg.icon
+
+  return (
+    <div className={`glass animate-zoom-in ${isReady ? 'animate-pulse-green-border' : ''}`} style={{ 
+      borderRadius: '24px', 
+      padding: '1.5rem', 
+      animationDelay: `${index * 0.07}s`, 
+      borderLeft: `6px solid ${cfg.color}`, 
+      position: 'relative',
+      background: isReady ? 'rgba(34,197,94,0.05)' : undefined,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '1rem'
+    }}>
+      {/* Order header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ fontFamily: 'Outfit,sans-serif', fontWeight: 700, fontSize: '0.95rem', color: 'var(--color-accent)' }}>{order.id}</span>
+            <span style={{ fontSize: '0.65rem', background: 'rgba(255,255,255,0.08)', padding: '2px 6px', borderRadius: '4px', color: 'var(--color-muted)' }}>{formatTimeAgo(order.timestamp)}</span>
+          </div>
+          <p style={{ color: 'var(--color-muted)', fontSize: '0.65rem', margin: '2px 0 0' }}>{formatDate(order.timestamp)}</p>
+        </div>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', background: cfg.bg, border: `1px solid ${cfg.border}`, color: cfg.color, borderRadius: '999px', padding: '4px 12px', fontSize: '0.75rem', fontWeight: 700 }}>
+          <Icon size={14} /> {cfg.label}
+        </div>
+      </div>
+
+      {/* Client Info */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', fontWeight: 600 }}>
+          <User size={14} color="var(--color-muted)" />
+          {order.cliente || 'Anónimo'}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
+          <CreditCard size={14} color="var(--color-muted)" />
+          <span style={{ textTransform: 'capitalize' }}>{order.pago}</span>
+        </div>
+        {order.nota && (
+          <div style={{ display: 'flex', alignItems: 'start', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--color-muted)', fontStyle: 'italic' }}>
+            <FileText size={14} style={{ marginTop: 2 }} />
+            "{order.nota}"
+          </div>
+        )}
+      </div>
+
+      {/* Items */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', flex: 1 }}>
+        {order.items.map(item => (
+          <div key={item.cartId} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.88rem' }}>
+            <span>{item.emoji}</span>
+            <span style={{ flex: 1, color: 'var(--color-text)', opacity: 0.9 }}>{item.nombre}</span>
+            <span style={{ color: 'var(--color-muted)', fontSize: '0.75rem' }}>x{item.cantidad}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Total */}
+      <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span style={{ color: 'var(--color-muted)', fontSize: '0.85rem' }}>Total</span>
+        <span style={{ fontFamily: 'Outfit,sans-serif', fontWeight: 800, color: 'var(--color-accent)', fontSize: '1.2rem' }}>{formatCOP(order.total)}</span>
+      </div>
+
+      {/* Action button */}
+      {cfg.next && (
+        <button
+          onClick={() => handleStatus(order.id, cfg.next)}
+          className={isReady ? 'btn-primary animate-pulse-orange' : 'btn-secondary'}
+          style={{ 
+            width: '100%', 
+            justifyContent: 'center',
+            padding: '1rem',
+            background: isReady ? 'linear-gradient(135deg,#22c55e,#16a34a)' : undefined,
+            boxShadow: isReady ? '0 10px 25px rgba(34,197,94,0.3)' : undefined,
+            color: isReady ? 'white' : undefined,
+            fontWeight: 800
+          }}
+        >
+          {cfg.nextLabel}
+        </button>
       )}
     </div>
   )

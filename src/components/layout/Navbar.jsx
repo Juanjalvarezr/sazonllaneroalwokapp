@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useStore } from '../../store/StoreContext'
 import { ShoppingCart, Flame, ChefHat, User, Settings, LogOut, Utensils } from 'lucide-react'
 import Modal from '../ui/Modal'
@@ -14,6 +14,12 @@ export default function Navbar({ role, setRole }) {
     setTargetRole(newRole)
     setShowPinModal(true)
   }
+
+  useEffect(() => {
+    const handleRequest = (e) => handleRoleChange(e.detail)
+    window.addEventListener('requestRoleChange', handleRequest)
+    return () => window.removeEventListener('requestRoleChange', handleRequest)
+  }, [])
 
   const handlePin = (pin) => {
     // Kitchen uses same PIN as cashier for simplicity, or admin can enter
@@ -82,6 +88,7 @@ export default function Navbar({ role, setRole }) {
           {[
             { key: 'cliente', label: 'Inicio', icon: User },
             { key: 'cajero', label: 'Caja', icon: ShoppingCart },
+            { key: 'cocina', label: 'Cocina', icon: Utensils },
             { key: 'admin', label: 'Admin', icon: Settings },
           ].map(({ key, label, icon: Icon }) => (
             <button key={key} onClick={() => handleRoleChange(key)} style={{

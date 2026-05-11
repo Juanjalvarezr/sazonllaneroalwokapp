@@ -113,9 +113,9 @@ export default function WokConfigurator({ onAddToCart, onClose }) {
         
         {step === 1 && (
           <section className="animate-slide-up">
-            <h3 style={{ fontFamily: 'Outfit', fontWeight: 800, fontSize: '1.4rem', margin: '0 0 0.5rem' }}>1. Selecciona tu base</h3>
+            <h3 style={{ fontFamily: 'Outfit', fontWeight: 800, fontSize: 'clamp(1.1rem, 4vw, 1.4rem)', margin: '0 0 0.5rem' }}>1. Selecciona tu base</h3>
             <p style={{ color: 'var(--color-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>El cimiento de tu wok gourmet</p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="grid-responsive" style={{ "--min-card-width": "140px" }}>
               {wokConfig.bases.filter(b => b.activo).map(b => (
                 <button key={b.id} onClick={() => { setSelectedBase(b); setStep(2); }} style={{
                   padding: '1.5rem', borderRadius: '24px', border: '2px solid',
@@ -135,9 +135,9 @@ export default function WokConfigurator({ onAddToCart, onClose }) {
 
         {step === 2 && (
           <section className="animate-slide-up">
-            <h3 style={{ fontFamily: 'Outfit', fontWeight: 800, fontSize: '1.4rem', margin: '0 0 0.5rem' }}>2. Elige la proteína</h3>
+            <h3 style={{ fontFamily: 'Outfit', fontWeight: 800, fontSize: 'clamp(1.1rem, 4vw, 1.4rem)', margin: '0 0 0.5rem' }}>2. Elige la proteína</h3>
             <p style={{ color: 'var(--color-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>Proteína fresca preparada al wok</p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '0.75rem' }}>
+            <div className="grid-responsive" style={{ "--min-card-width": "130px" }}>
               {wokConfig.proteinas.filter(p => p.activo && p.stock > 0).map(p => (
                 <button key={p.id} onClick={() => { setSelectedProteina(p); setStep(3); }} style={{
                   padding: '1.25rem 1rem', borderRadius: '20px', border: '2px solid',
@@ -157,9 +157,9 @@ export default function WokConfigurator({ onAddToCart, onClose }) {
 
         {step === 3 && (
           <section className="animate-slide-up">
-            <h3 style={{ fontFamily: 'Outfit', fontWeight: 800, fontSize: '1.4rem', margin: '0 0 0.5rem' }}>3. ¿Algún principio?</h3>
+            <h3 style={{ fontFamily: 'Outfit', fontWeight: 800, fontSize: 'clamp(1.1rem, 4vw, 1.4rem)', margin: '0 0 0.5rem' }}>3. ¿Algún principio?</h3>
             <p style={{ color: 'var(--color-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>Tradición llanera en tu plato</p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '0.75rem' }}>
+            <div className="grid-responsive" style={{ "--min-card-width": "120px" }}>
               {wokConfig.principios.map(p => (
                 <button key={p.id} onClick={() => { setSelectedPrincipio(p); setStep(4); }} style={{
                   padding: '1.25rem 1rem', borderRadius: '20px', border: '2px solid',
@@ -184,9 +184,9 @@ export default function WokConfigurator({ onAddToCart, onClose }) {
 
         {step === 4 && (
           <section className="animate-slide-up">
-            <h3 style={{ fontFamily: 'Outfit', fontWeight: 800, fontSize: '1.4rem', margin: '0 0 0.5rem' }}>4. Elige tu ensalada</h3>
+            <h3 style={{ fontFamily: 'Outfit', fontWeight: 800, fontSize: 'clamp(1.1rem, 4vw, 1.4rem)', margin: '0 0 0.5rem' }}>4. Elige tu ensalada</h3>
             <p style={{ color: 'var(--color-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>El toque fresco y saludable</p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '0.75rem' }}>
+            <div className="grid-responsive" style={{ "--min-card-width": "120px" }}>
               {wokConfig.ensaladas.map(e => (
                 <button key={e.id} onClick={() => { setSelectedEnsalada(e); setStep(5); }} style={{
                   padding: '1.25rem 1rem', borderRadius: '20px', border: '2px solid',
@@ -247,9 +247,9 @@ export default function WokConfigurator({ onAddToCart, onClose }) {
 
         {step === 6 && (
           <section className="animate-slide-up">
-            <h3 style={{ fontFamily: 'Outfit', fontWeight: 800, fontSize: '1.4rem', margin: '0 0 0.5rem' }}>6. ¿Qué deseas tomar?</h3>
+            <h3 style={{ fontFamily: 'Outfit', fontWeight: 800, fontSize: 'clamp(1.1rem, 4vw, 1.4rem)', margin: '0 0 0.5rem' }}>6. ¿Qué deseas tomar?</h3>
             <p style={{ color: 'var(--color-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>Acompaña tu wok con una bebida fría</p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '0.75rem' }}>
+            <div className="grid-responsive" style={{ "--min-card-width": "130px" }}>
               {state.bebidas.filter(b => b.activo && b.stock > 0).map(b => (
                 <button key={b.id} onClick={() => { setSelectedBebida(b); handleFinish(); }} style={{
                   padding: '1.25rem 1rem', borderRadius: '20px', border: '2px solid',

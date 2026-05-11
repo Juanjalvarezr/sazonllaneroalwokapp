@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useStore } from '../../store/StoreContext'
 import { formatCOP } from '../../utils/formatters'
-import { ShoppingCart, UtensilsCrossed, Flame, Beer, MapPin, PlusCircle, X } from 'lucide-react'
+import { ShoppingCart, UtensilsCrossed, Flame, MapPin, X } from 'lucide-react'
 import MenuRapido from './MenuRapido'
 import MenuWoks from './MenuWoks'
 import Cart from './Cart'
@@ -74,8 +74,6 @@ export default function ClientView({ isStaffMode = false }) {
               Sabores llaneros y técnica oriental. ¡Ven por el tuyo!
             </p>
           </div>
-          
-          </div>
         </div>
 
         {/* 2. MENÚ DEL DÍA (ALMUERZO ESPECIAL) */}
@@ -96,8 +94,6 @@ export default function ClientView({ isStaffMode = false }) {
             <div style={{ background: 'rgba(234,88,12,0.1)', color: 'var(--color-accent)', fontSize: '0.7rem', fontWeight: 800, padding: '3px 10px', borderRadius: '999px', textTransform: 'uppercase' }}>Buffet a la mesa</div>
           </div>
           <MenuWoks onAddToCart={handleAddToCart} />
-        </section>
-
         </section>
       </div>
 
